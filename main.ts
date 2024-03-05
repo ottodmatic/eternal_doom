@@ -24,9 +24,11 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     shoot()
 })
-function smallDRIP_GOD () {
-    myEnemy.follow(mySprite, 5)
-}
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile9`, function (sprite, location) {
+    for (let index = 0; index < 1; index++) {
+        enemy2_(FIRE_LIST)
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.FIREBALL, function (sprite, otherSprite) {
     sprites.destroy(otherSprite, effects.ashes, 500)
 })
@@ -203,7 +205,6 @@ function setup () {
     mySprite.setImage(assets.image`myImage`)
     mySprite.setPosition(80, 55)
     mySprite.setScale(3.5, ScaleAnchor.Middle)
-    mySprite = Render.getRenderSpriteVariable()
     playerStatus = statusbars.create(125, 9, StatusBarKind.playerHealth)
     playerStatus.setFlag(SpriteFlag.RelativeToCamera, true)
     playerStatus.setPosition(80, 116)
@@ -229,15 +230,24 @@ function fastBOI () {
         bigBOI()
     }
 }
+function enemy2_ (enlist: Image[]) {
+    for (let index = 0; index < 4; index++) {
+        myEnemy = sprites.create(enlist._pickRandom(), SpriteKind.Enemy)
+        tiles.placeOnTile(myEnemy, tiles.getTileLocation(randint(14, 20), randint(10, 18)))
+        if (!(myEnemy.image.equals(assets.image`myImage0`))) {
+            fastBOI()
+        }
+    }
+}
 let FIREBALL: Sprite = null
 let playerStatus: StatusBarSprite = null
-let FIRE_LIST: Image[] = []
 let locationListY: number[] = []
 let locationListX: number[] = []
+let mySprite: Sprite = null
 let mySprite2: Sprite = null
 let projectile: Sprite = null
 let statusbar: StatusBarSprite = null
-let mySprite: Sprite = null
+let FIRE_LIST: Image[] = []
 let myEnemy: Sprite = null
 setup()
 game.onUpdateInterval(5000, function () {
