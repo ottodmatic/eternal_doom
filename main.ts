@@ -2,6 +2,7 @@ namespace SpriteKind {
     export const Gun = SpriteKind.create()
     export const FIREBALL = SpriteKind.create()
     export const fatBOI = SpriteKind.create()
+    export const key = SpriteKind.create()
 }
 namespace StatusBarKind {
     export const playerHealth = StatusBarKind.create()
@@ -13,7 +14,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 function enemiy (enList: Image[]) {
     for (let index = 0; index < 4; index++) {
         myEnemy = sprites.create(enList._pickRandom(), SpriteKind.Enemy)
-        tiles.placeOnTile(myEnemy, tiles.getTileLocation(randint(5, 11), 0))
+        tiles.placeOnTile(myEnemy, tiles.getTileLocation(randint(5, 11), randint(5, 10)))
+        listOfEnemies.unshift(0)
         if (!(myEnemy.image.equals(assets.image`myImage0`))) {
             fastBOI()
         }
@@ -23,6 +25,8 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile7`, function (sprite, l
     if (count2 < 1) {
         enemy3_(FIRE_LIST)
         count2 += 1
+        room3 = true
+        loopCount += -1
     }
 })
 statusbars.onZero(StatusBarKind.playerHealth, function (status) {
@@ -42,6 +46,17 @@ function enemy3_ (list: Image[]) {
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     jump()
 })
+function keyYAY () {
+    keyWork = true
+    keyUI = sprites.create(assets.image`myImage4`, SpriteKind.Food)
+    keyUI.setFlag(SpriteFlag.RelativeToCamera, true)
+    keyUI.setPosition(132, 93)
+    keyUI.setScale(1.5, ScaleAnchor.Middle)
+    sprites.destroy(keySprite)
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.key, function (sprite, otherSprite) {
+    keyYAY()
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     shoot()
 })
@@ -52,7 +67,7 @@ function bigBOI () {
     myEnemy.setKind(SpriteKind.fatBOI)
     statusbar = statusbars.create(0.1, 0.1, StatusBarKind.EnemyHealth)
     statusbar.attachToSprite(myEnemy)
-    statusbar.value = 2
+    statusbar.value = 3
 }
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.fatBOI, function (sprite, otherSprite) {
     statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, otherSprite).value += -1
@@ -222,21 +237,17 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile9`, function (sprite, l
     if (count < 1) {
         enemy2_(FIRE_LIST)
         count += 1
+        room2 = true
+        loopCount += -1
     }
 })
 function jump () {
     Render.jump(mySprite2)
 }
 function setup () {
-    locationListX = [
-    8,
-    13,
-    17,
-    18,
-    0
-    ]
+    loopCount = 0
+    enemyCount = 0
     listOfEnemies = []
-    locationListY = [0, 1]
     FIRE_LIST = [assets.image`myImage1`, assets.image`myImage0`, assets.image`myImage2`]
     mySprite2 = Render.getRenderSpriteVariable()
     scene.setBackgroundImage(img`
@@ -375,14 +386,22 @@ function setup () {
 }
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
     sprites.destroy(status.spriteAttachedTo(), effects.ashes, 500)
+    listOfEnemies.pop()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.FIREBALL, function (sprite, otherSprite) {
     playerStatus.value += -5
     sprites.destroy(otherSprite, effects.ashes, 500)
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`tile12`, function (sprite, location) {
+    if (keyWork == true) {
+        tiles.setWallAt(tiles.getTileLocation(18, 6), false)
+        sprites.destroy(keyUI)
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprites.destroy(otherSprite, effects.ashes, 500)
     sprites.destroy(sprite, effects.spray, 500)
+    listOfEnemies.pop()
 })
 function fastBOI () {
     myEnemy.follow(mySprite2, 5)
@@ -401,21 +420,52 @@ function enemy2_ (enlist: Image[]) {
     }
 }
 let FIREBALL: Sprite = null
-let locationListY: number[] = []
-let locationListX: number[] = []
+let enemyCount = 0
+let room2 = false
 let count = 0
 let mySprite: Sprite = null
 let mySprite2: Sprite = null
 let projectile: Sprite = null
 let statusbar: StatusBarSprite = null
-let listOfEnemies: number[] = []
+let keySprite: Sprite = null
+let keyUI: Sprite = null
+let keyWork = false
+let loopCount = 0
+let room3 = false
 let FIRE_LIST: Image[] = []
 let count2 = 0
+let listOfEnemies: number[] = []
 let myEnemy: Sprite = null
 let playerStatus: StatusBarSprite = null
 setup()
 game.onUpdate(function () {
-	
+    if (loopCount == 0) {
+        if (listOfEnemies.length == 0) {
+            enemyCount += 1
+            loopCount += 1
+            if (enemyCount > 2) {
+                keySprite = sprites.create(img`
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . 2 2 2 . . . . . . . 
+                    . . . . . 2 . . . 2 . . . . . . 
+                    . . . . . 2 . . . 2 . . . . . . 
+                    . . . . . 2 . . . 2 . . . . . . 
+                    . . . . . . 2 2 2 . . . . . . . 
+                    . . . . . . . 2 . . . . . . . . 
+                    . . . . . . . 2 2 . . . . . . . 
+                    . . . . . . . 2 . . . . . . . . 
+                    . . . . . . . 2 2 . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    . . . . . . . . . . . . . . . . 
+                    `, SpriteKind.key)
+                tiles.placeOnTile(keySprite, tiles.getTileLocation(17, 24))
+            }
+        }
+    }
 })
 game.onUpdateInterval(5000, function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
