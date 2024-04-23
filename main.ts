@@ -11,7 +11,7 @@ namespace StatusBarKind {
     export const bossHealth = StatusBarKind.create()
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    playerStatus.value += -5
+    playerStatus.value += -10
     pause(500)
 })
 function enemiy (enList: Image[]) {
@@ -46,9 +46,6 @@ function enemy3_ (list: Image[]) {
         }
     }
 }
-controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    jump()
-})
 function keyYAY () {
     keyWork = true
     keyUI = sprites.create(assets.image`myImage4`, SpriteKind.Food)
@@ -58,22 +55,14 @@ function keyYAY () {
     sprites.destroy(keySprite)
 }
 function bossFight () {
-    dripKING = sprites.create(assets.image`hotASF`, SpriteKind.BOSS)
-    dripKING.setScale(0.75, ScaleAnchor.Middle)
-    tiles.placeOnTile(dripKING, tiles.getTileLocation(18, 1))
-    bossHelath = statusbars.create(20, 4, StatusBarKind.bossHealth)
-    bossHelath.attachToSprite(dripKING)
-    bossHelath.setFlag(SpriteFlag.RelativeToCamera, true)
-    bossHelath.setPosition(80, 8)
+    game.showLongText("YOU WIN!!!", DialogLayout.Center)
+    game.reset()
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.key, function (sprite, otherSprite) {
     keyYAY()
 })
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    shoot()
-})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.bossFIRE, function (sprite, otherSprite) {
-    playerStatus.value += -10
+    playerStatus.value += -20
     sprites.destroy(otherSprite, effects.ashes, 500)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.FIREBALL, function (sprite, otherSprite) {
@@ -88,6 +77,9 @@ function bigBOI () {
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.fatBOI, function (sprite, otherSprite) {
     statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, otherSprite).value += -1
     sprites.destroy(sprite, effects.spray, 500)
+})
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    shoot()
 })
 function shoot () {
     projectile = sprites.createProjectileFromSprite(img`
@@ -407,6 +399,9 @@ statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
     sprites.destroy(status.spriteAttachedTo(), effects.ashes, 500)
     listOfEnemies.pop()
 })
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    jump()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.FIREBALL, function (sprite, otherSprite) {
     playerStatus.value += -5
     sprites.destroy(otherSprite, effects.ashes, 500)
@@ -439,8 +434,8 @@ function enemy2_ (enlist: Image[]) {
         }
     }
 }
-let bossFIRE: Sprite = null
-let FIREBALL: Sprite = null
+let bossFIRE2: Sprite = null
+let FIREBALL2: Sprite = null
 let enemyCount = 0
 let room2 = false
 let count = 0
@@ -448,8 +443,6 @@ let mySprite: Sprite = null
 let mySprite2: Sprite = null
 let projectile: Sprite = null
 let statusbar: StatusBarSprite = null
-let bossHelath: StatusBarSprite = null
-let dripKING: Sprite = null
 let keySprite: Sprite = null
 let keyUI: Sprite = null
 let keyWork = false
@@ -492,24 +485,24 @@ game.onUpdate(function () {
 })
 game.onUpdateInterval(5000, function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
-        FIREBALL = sprites.create(assets.image`myImage3`, SpriteKind.FIREBALL)
-        Render.setSpriteAttribute(FIREBALL, RCSpriteAttribute.ZOffset, 2.5)
-        FIREBALL.setScale(0.25, ScaleAnchor.Middle)
-        FIREBALL.setPosition(value.x, value.y)
-        FIREBALL.follow(mySprite2, 15)
+        FIREBALL2 = sprites.create(assets.image`myImage3`, SpriteKind.FIREBALL)
+        Render.setSpriteAttribute(FIREBALL2, RCSpriteAttribute.ZOffset, 2.5)
+        FIREBALL2.setScale(0.25, ScaleAnchor.Middle)
+        FIREBALL2.setPosition(value.x, value.y)
+        FIREBALL2.follow(mySprite2, 15)
     }
-    for (let value of sprites.allOfKind(SpriteKind.fatBOI)) {
-        FIREBALL = sprites.create(assets.image`myImage3`, SpriteKind.FIREBALL)
-        Render.setSpriteAttribute(FIREBALL, RCSpriteAttribute.ZOffset, 2.5)
-        FIREBALL.setScale(0.25, ScaleAnchor.Middle)
-        FIREBALL.setPosition(value.x, value.y)
-        FIREBALL.follow(mySprite2, 15)
+    for (let value2 of sprites.allOfKind(SpriteKind.fatBOI)) {
+        FIREBALL2 = sprites.create(assets.image`myImage3`, SpriteKind.FIREBALL)
+        Render.setSpriteAttribute(FIREBALL2, RCSpriteAttribute.ZOffset, 2.5)
+        FIREBALL2.setScale(0.25, ScaleAnchor.Middle)
+        FIREBALL2.setPosition(value2.x, value2.y)
+        FIREBALL2.follow(mySprite2, 15)
     }
-    for (let value of sprites.allOfKind(SpriteKind.BOSS)) {
-        bossFIRE = sprites.create(assets.image`myImage3`, SpriteKind.bossFIRE)
-        Render.setSpriteAttribute(FIREBALL, RCSpriteAttribute.ZOffset, 2.5)
-        FIREBALL.setScale(0.25, ScaleAnchor.Middle)
-        FIREBALL.setPosition(value.x, value.y)
-        FIREBALL.follow(mySprite2, 15)
+    for (let value3 of sprites.allOfKind(SpriteKind.BOSS)) {
+        bossFIRE2 = sprites.create(assets.image`myImage3`, SpriteKind.bossFIRE)
+        Render.setSpriteAttribute(FIREBALL2, RCSpriteAttribute.ZOffset, 2.5)
+        FIREBALL2.setScale(0.25, ScaleAnchor.Middle)
+        FIREBALL2.setPosition(value3.x, value3.y)
+        FIREBALL2.follow(mySprite2, 15)
     }
 })
